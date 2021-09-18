@@ -1,44 +1,29 @@
 /// Note: Run 4 Times to see step by step results
 
-const problem2 = require('../problem2');
-const fs = require('fs');
+const { readFiles, convert } = require('../problem2');
+const fs = require('fs').promises;
 
 const filePath = 'data/lipsum.txt';
 
-const readFile = (filePath, type) => {
-  fs.readFile(filePath, 'utf-8', (err, data) => {
-    if (err) console.log(err);
-    else convert(data, type);
-  });
+const runAll = () => {
+  readFiles(filePath)
+    .then((data) => {
+      convert(data, 'uppercase');
+      readFiles('uppercase.txt').then((data) => {
+        convert(data, 'lowercaseAndSplit');
+        readFiles('lowercaseAndSplit.txt').then((data) => {
+          convert(data, 'sort');
+          fs.readFile('filenames.txt', 'utf-8').then((data) => {
+            let fileName = data.split(' ');
+            for (let index = 0; index < fileName.length; index++) {
+              fs.unlink(fileName[index]);
+            }
+            fs.unlink('filenames.txt');
+          });
+        });
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
-const convert = (data, type) => {
-  switch (type) {
-    case 'uppercase':
-      writeAndStore(data.toUpperCase(), 'uppercase.txt');
-      break;
-    case 'lowercaseAndSplit':
-      writeAndStore(
-        data.toLowerCase().split('\n').join('').split('.').join(''),
-        'lowercaseAndSplit.txt'
-      );
-      break;
-    case 'sort':
-      writeAndStore(data.split(',').sort().join(''), 'sort.txt');
-      break;
-    default:
-      console.log(type);
-      break;
-  }
-};
-const writeAndStore = (data, filename) => {
-  fs.writeFile(filename, data, (err) => {
-    if (err) console.log(err);
-  });
-
-  fs.appendFile('filenames.txt', filename + ' ', (err) => {
-    if (err) console.log(err);
-  });
-};
-
-problem2(filePath, readFile, writeAndStore);
+runAll();
