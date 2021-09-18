@@ -1,15 +1,23 @@
-const fs = require('fs');
+const fs = require('fs').promises;
+const path = require('path');
 
-const problem1 = (dirPath, cb) => {
-  const isExist = fs.existsSync(dirPath);
-  if (!isExist) {
-    fs.mkdir(dirPath, (err) => {
-      if (err) console.log(err);
-    });
-  }
-
-  for (let index = 0; index < 10; index++) {
-    cb(dirPath, index);
-  }
+const createDir = (dirPath) => {
+  return fs.mkdir(dirPath);
 };
-module.exports = problem1;
+
+const makeFile = (dirPath, n) => {
+  return fs.writeFile(
+    path.join(dirPath, `random${n}.json`),
+    `Hello from random${n}.json`
+  );
+};
+
+const deletFile = (dirPath, n) => {
+  return fs.unlink(path.join(dirPath, `random${n}.json`));
+};
+
+const deleteDir = (dirPath) => {
+  return fs.rmdir(dirPath);
+};
+
+module.exports = { createDir, makeFile, deletFile, deleteDir };

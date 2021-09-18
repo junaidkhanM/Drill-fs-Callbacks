@@ -1,25 +1,27 @@
-const problem1 = require('../problem1');
-const fs = require('fs');
-const path = require('path');
+const { createDir, makeFile, deletFile, deleteDir } = require('../problem1');
 
-const makeFile = (dirPath, n) => {
-  fs.writeFile(
-    path.join(dirPath, `random${n}.json`),
-    `Hello from random${n}.json`,
-    (err) => {
-      if (err) console.log(err);
-    }
-  );
+const runAll = () => {
+  const dirPath = 'randomDir';
+
+  createDir(dirPath)
+    .then(() => console.log(`Directory Created: ${dirPath}`))
+    .catch((err) => console.log(err));
+
+  for (let i = 0; i < 10; i++) {
+    makeFile(dirPath, i)
+      .then(() => console.log(`Created and Write into file: random${i}.json`))
+      .catch((err) => console.log(err));
+  }
+
+  for (let i = 0; i < 10; i++) {
+    deletFile(dirPath, i)
+      .then(() => console.log(`File Deleted: random${i}.json`))
+      .catch((err) => console.log(err));
+  }
+
+  deleteDir(dirPath)
+    .then(() => console.log(`Directory Deleted: ${dirPath}`))
+    .catch((err) => console.log(err));
 };
 
-const deletFile = (dirPath, n) => {
-  fs.unlink(path.join(dirPath, `random${n}.json`), (err) => {
-    if (err) console.log(err);
-  });
-};
-
-// To create dir and make 10 json files
-problem1('randomDir', makeFile);
-
-// To delete all json files from dir
-problem1('randomDir', deletFile);
+runAll();
