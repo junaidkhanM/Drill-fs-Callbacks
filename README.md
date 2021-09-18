@@ -12,3 +12,8 @@ node test/testProblem1.js # For problem1.js
 node test/testProblem2.js # For problem2.js
 
 ```
+
+# Branches
+
+1. main
+2. Promises
